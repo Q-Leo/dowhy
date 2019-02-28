@@ -1,9 +1,9 @@
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import GradientBoostingClassifier
 from statsmodels.nonparametric.kernel_density import KDEMultivariateConditional, EstimatorSettings
 from sklearn.preprocessing import LabelEncoder
 from pandas import get_dummies
 import numpy as np
+import logging
 
 
 def propensity_of_treatment_score(data, covariates, treatment, model='logistic', variable_types=None):

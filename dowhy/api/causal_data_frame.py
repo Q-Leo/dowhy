@@ -2,6 +2,7 @@ import pandas as pd
 from dowhy.do_why import CausalModel
 import dowhy.do_samplers as do_samplers
 from dowhy.utils.api import parse_state
+import numpy as np
 
 
 @pd.api.extensions.register_dataframe_accessor("causal")
@@ -105,6 +106,18 @@ class CausalAccessor(object):
         if not stateful:
             self.reset()
         return result
+
+    def do_stat(self, stat, *args, bootstrap_samples=500, aggregate=False, **kwargs):
+        stats = []
+        for _ in range(bootstrap_samples):
+            df = self.do(*args, **kwargs)
+            stats.append(stat(df))
+        if aggregate:
+            mu = np.mean(stats)
+            sig = 1.96 * np.std(stats) / np.sqrt(len(df))
+            return mu - sig, mu, mu + sig
+        else:
+            return stats
 
     def parse_x(self, x):
         if type(x) == str:
